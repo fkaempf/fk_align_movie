@@ -23,12 +23,12 @@ def askforhdf5():
     root.destroy()
     root.mainloop()
     return dir_path
+file = askforhdf5()
 
-
-with h5py.File(askforhdf5(), 'r') as file:
-    imaging_data = np.array(file['z_plane0000']['imaging_green_channel'])
-    imaging_information = np.array(file['z_plane0000']['imaging_information'])
-    visual_stimulus_data = np.array(file['z_plane0000']['stimulus_information'])
+with h5py.File(file, 'r') as file:
+    imaging_data = np.array(file['0']['fp_imaging_data_green_channel'])#.astype(np.uint16)
+    imaging_information = np.array(file['0']['imaging_information'])#.astype(np.uint16)
+    visual_stimulus_data = np.array(file['0']['stimulus_information'])#.astype(np.uint16)
 
 imaging_time = imaging_information[:, 0]
 
@@ -62,7 +62,7 @@ avg_response1 = np.nanmean(trials_stimulus_aligned_F[1], axis=0)
 avg_response_diff = avg_response0 - avg_response1 + 10000
 
 imsave(dir_path.split('/')[-1].split('.')[0] + "_avg0.tif", avg_response0.astype(np.uint16))
-imsave(dir_path.split('/')[-1].split('.')[1] + "_avg1.tif", avg_response1.astype(np.uint16))
-imsave(dir_path.split('/')[-1].split('.')[1] + "_diff.tif", avg_response_diff.astype(np.uint16))
+imsave(dir_path.split('/')[-1].split('.')[0] + "_avg1.tif", avg_response1.astype(np.uint16))
+imsave(dir_path.split('/')[-1].split('.')[0] + "_diff.tif", avg_response_diff.astype(np.uint16))
 
 
