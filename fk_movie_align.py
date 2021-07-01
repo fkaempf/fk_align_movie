@@ -26,9 +26,9 @@ def askforhdf5():
 file = askforhdf5()
 
 with h5py.File(file, 'r') as file:
-    imaging_data = np.array(file['0']['fp_imaging_data_green_channel'])#.astype(np.uint16)
-    imaging_information = np.array(file['0']['imaging_information'])#.astype(np.uint16)
-    visual_stimulus_data = np.array(file['0']['stimulus_information'])#.astype(np.uint16)
+    imaging_data = np.array(file['0']['mc_imaging_data_green_channel']).astype(np.uint16)
+    imaging_information = np.array(file['0']['imaging_information']).astype(np.uint16)
+    visual_stimulus_data = np.array(file['0']['stimulus_information']).astype(np.uint16)
 
 imaging_time = imaging_information[:, 0]
 
@@ -40,9 +40,9 @@ stimulus_start_times = np.transpose(visual_stimulus_data)[0]
 stimulus_types = np.transpose(visual_stimulus_data)[2]
 
 
-for stimulus_start_time, stim in zip(stimulus_start_times, stimulus_types):
+for stimulus_start_time, stim,no in zip(stimulus_start_times, stimulus_types,range(1,161)):
 
-    print(stimulus_start_time, stim)
+    print(str(no) + '/160')
 
     ts = np.arange(stimulus_start_time - 10, stimulus_start_time + 60 + 10 - 0.25, 0.5)
     stimulus_aligned_F = f_imaging_interpolation_function_F(ts).astype(np.uint16)
@@ -55,14 +55,14 @@ for stimulus_start_time, stim in zip(stimulus_start_times, stimulus_types):
 del f_imaging_interpolation_function_F
 del imaging_data
 
-print('extacted stimulus data')
+print('extracted stimulus data')
 
 avg_response0 = np.nanmean(trials_stimulus_aligned_F[0], axis=0)
 avg_response1 = np.nanmean(trials_stimulus_aligned_F[1], axis=0)
 avg_response_diff = avg_response0 - avg_response1 + 10000
 
-imsave(dir_path.split('/')[-1].split('.')[0] + "_avg0.tif", avg_response0.astype(np.uint16))
-imsave(dir_path.split('/')[-1].split('.')[0] + "_avg1.tif", avg_response1.astype(np.uint16))
-imsave(dir_path.split('/')[-1].split('.')[0] + "_diff.tif", avg_response_diff.astype(np.uint16))
+imsave(dir_path + "_avg0.tif", avg_response0.astype(np.uint16))
+imsave(dir_path + "_avg1.tif", avg_response1.astype(np.uint16))
+imsave(dir_path + "_diff.tif", avg_response_diff.astype(np.uint16))
 
 
